@@ -1,165 +1,70 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sharing Box - Your Secure File Sharing Hub</title>
-
-    <link rel="icon" type="image/png" href="https://i.postimg.cc/XJKd8xJB/IMG-20251026-085233-602.jpg">
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <style>
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont;
-            user-select: none;
-        }
-        .theme-light { background:#f3f4f6; color:#111827; }
-        .theme-dark { background:#1a1a1a; color:#f0f0f0; }
-
-        .btn {
-            display:inline-flex;
-            align-items:center;
-            justify-content:center;
-            padding:0.75rem 1.5rem;
-            border-radius:0.5rem;
-            font-weight:600;
-            transition:0.2s;
-        }
-        .btn-primary { background:#4f46e5; color:#fff; }
-        .btn-secondary { background:#374151; color:#fff; }
-
-        .loader {
-            border:8px solid #374151;
-            border-top:8px solid #4f46e5;
-            border-radius:50%;
-            width:60px;
-            height:60px;
-            animation:spin 1.2s linear infinite;
-            margin:auto;
-        }
-        @keyframes spin {
-            to { transform:rotate(360deg); }
-        }
-    </style>
+<meta charset="UTF-8">
+<title>Video Player</title>
+<style>
+body{margin:0;background:black;}
+#wrap{position:relative;}
+video{width:100%;height:auto;}
+#gear{
+  position:absolute;
+  bottom:15px;
+  right:15px;
+  font-size:22px;
+  color:white;
+  cursor:pointer;
+}
+#menu{
+  position:absolute;
+  bottom:55px;
+  right:15px;
+  background:rgba(0,0,0,.85);
+  border-radius:8px;
+  display:none;
+}
+#menu div{
+  padding:10px 18px;
+  color:white;
+  cursor:pointer;
+}
+#menu div:hover{background:#333;}
+</style>
 </head>
 
-<body class="flex flex-col min-h-screen theme-light">
-
-<header id="header" class="w-full bg-white shadow p-4">
-    <div class="max-w-4xl mx-auto flex justify-between items-center">
-        <a href="/" class="text-xl font-bold">Sharing Box</a>
-        <a id="upload-btn" class="btn btn-primary text-sm">Upload Now</a>
-    </div>
-</header>
-
-<main class="flex-grow flex items-center justify-center p-4">
-
-    <!-- DOWNLOAD SCREEN -->
-    <div id="download-screen" class="hidden w-full">
-
-        <div id="loader-container" class="max-w-2xl w-full p-8 bg-gray-800 rounded-lg text-center mx-auto">
-            <div class="loader"></div>
-            <p class="mt-4 text-gray-400">Please wait...</p>
-        </div>
-
-        <div id="content-container" class="hidden max-w-2xl w-full p-6 bg-gray-800 rounded-lg text-center mx-auto">
-
-            <h1 id="file-name" class="text-xl font-bold break-words"></h1>
-            <p id="file-size" class="text-gray-400 mb-4"></p>
-
-            <!-- ✅ VIDEO PLAYER -->
-            <div id="video-player-container" class="hidden w-full mb-6">
-                <video
-                    id="video-player"
-                    class="w-full rounded-lg"
-                    controls
-                    playsinline
-                    preload="metadata"
-                    controlsList="nodownload"
-                ></video>
-            </div>
-
-            <div id="button-container" class="flex flex-col sm:flex-row gap-4 justify-center"></div>
-
-        </div>
-    </div>
-</main>
-
-<footer id="footer" class="w-full bg-gray-200 p-4 text-center text-sm text-gray-500">
-    © 2025 Sharing Box
-</footer>
+<body>
+<div id="wrap">
+  <video id="v" controls autoplay></video>
+  <div id="gear">⚙️</div>
+  <div id="menu">
+    <div onclick="q(480)">480p</div>
+    <div onclick="q(720)">720p</div>
+    <div onclick="q(1080)">1080p</div>
+  </div>
+</div>
 
 <script>
-const RENDER_APP_URL = "https://anime-stream-gis2.onrender.com";
-const BOT_USERNAME = "Zxhls_bot";
-document.getElementById("upload-btn").href = `https://t.me/${BOT_USERNAME}`;
+const links={
+  480:"http://infinity-tg-cloud.onrender.com/dl/106/InfinityTGCloudBOT_1764858814.mkv?hash=AgADUi",
+  720:"http://infinity-tg-cloud.onrender.com/dl/106/InfinityTGCloudBOT_1764858814.mkv?hash=AgADUi",
+  1080:"http://infinity-tg-cloud.onrender.com/dl/106/InfinityTGCloudBOT_1764858814.mkv?hash=AgADUi"
+};
 
-(function () {
-    const params = new URLSearchParams(window.location.search);
-    const fileId = params.get("id");
+const v=document.getElementById("v");
+const m=document.getElementById("menu");
+document.getElementById("gear").onclick=()=> {
+  m.style.display = m.style.display==="block"?"none":"block";
+};
 
-    if (!fileId) return;
+v.src=links[720];
 
-    document.body.className = "flex flex-col min-h-screen theme-dark";
-    document.getElementById("download-screen").classList.remove("hidden");
-
-    fetchFileData(fileId);
-})();
-
-async function fetchFileData(fileId) {
-    const loader = document.getElementById("loader-container");
-    const content = document.getElementById("content-container");
-
-    const fileName = document.getElementById("file-name");
-    const fileSize = document.getElementById("file-size");
-
-    const videoBox = document.getElementById("video-player-container");
-    const video = document.getElementById("video-player");
-
-    const buttons = document.getElementById("button-container");
-
-    try {
-        const res = await fetch(`${RENDER_APP_URL}/api/file/${fileId}`);
-        const data = await res.json();
-
-        fileName.innerText = data.file_name;
-        fileSize.innerText = "File Size: " + data.file_size;
-        document.title = "Download " + data.file_name;
-
-        const mime = data.mime_type || "video/mp4";
-
-        if (data.is_media) {
-            video.src = data.direct_dl_link;
-            video.type = mime;
-            videoBox.classList.remove("hidden");
-
-            const mx = `intent:${data.direct_dl_link}#Intent;action=android.intent.action.VIEW;type=${mime};end`;
-            const vlc = `intent:${data.direct_dl_link}#Intent;action=android.intent.action.VIEW;type=${mime};package=org.videolan.vlc;end`;
-
-            buttons.innerHTML = `
-                <a href="${data.direct_dl_link}" class="btn btn-primary">Direct Download</a>
-                <a href="${mx}" class="btn btn-secondary">MX Player</a>
-                <a href="${vlc}" class="btn btn-secondary">VLC</a>
-            `;
-        } else {
-            videoBox.classList.add("hidden");
-            buttons.innerHTML = `<a href="${data.direct_dl_link}" class="btn btn-primary">Download</a>`;
-        }
-
-        loader.classList.add("hidden");
-        content.classList.remove("hidden");
-
-    } catch (e) {
-        fileName.innerText = "Error loading file";
-        loader.classList.add("hidden");
-        content.classList.remove("hidden");
-    }
+function q(x){
+  let t=v.currentTime;
+  v.src=links[x];
+  v.currentTime=t;
+  v.play();
+  m.style.display="none";
 }
 </script>
-
-<script>
-document.addEventListener("contextmenu", e => e.preventDefault());
-</script>
-
 </body>
-</html>
+</html/>
