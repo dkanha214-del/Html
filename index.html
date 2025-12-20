@@ -1,70 +1,109 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Video Player</title>
+<title>Iframe Embed Link Extractor</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body{margin:0;background:black;}
-#wrap{position:relative;}
-video{width:100%;height:auto;}
-#gear{
-  position:absolute;
-  bottom:15px;
-  right:15px;
-  font-size:22px;
-  color:white;
+body{
+  background:#0f1220;
+  color:#fff;
+  font-family:Arial, sans-serif;
+  margin:0;
+  padding:15px;
+}
+h1{font-size:20px;margin-bottom:10px}
+textarea{
+  width:100%;
+  min-height:180px;
+  background:#111;
+  color:#0f0;
+  border:1px solid #333;
+  border-radius:6px;
+  padding:10px;
+  box-sizing:border-box;
+}
+button{
+  margin-top:10px;
+  padding:10px 15px;
+  background:#00c2ff;
+  border:none;
+  border-radius:6px;
+  font-weight:bold;
   cursor:pointer;
 }
-#menu{
-  position:absolute;
-  bottom:55px;
-  right:15px;
-  background:rgba(0,0,0,.85);
-  border-radius:8px;
-  display:none;
+button:active{opacity:.8}
+.result{
+  margin-top:15px;
+  background:#111;
+  border:1px solid #333;
+  border-radius:6px;
+  padding:10px;
+  font-size:14px;
+  white-space:pre-wrap;
+  word-break:break-all;
 }
-#menu div{
-  padding:10px 18px;
-  color:white;
-  cursor:pointer;
-}
-#menu div:hover{background:#333;}
+small{opacity:.7}
 </style>
 </head>
 
 <body>
-<div id="wrap">
-  <video id="v" controls autoplay></video>
-  <div id="gear">⚙️</div>
-  <div id="menu">
-    <div onclick="q(480)">480p</div>
-    <div onclick="q(720)">720p</div>
-    <div onclick="q(1080)">1080p</div>
-  </div>
-</div>
+
+<h1>🎬 Iframe Embed Link Extractor</h1>
+<small>Paste full HTML code below and extract all video embed links</small>
+
+<textarea id="htmlInput" placeholder="Paste full HTML code here..."></textarea>
+
+<button onclick="extract()">Extract Embed Links</button>
+<button onclick="copy()">Copy Result</button>
+
+<div class="result" id="output">No data</div>
 
 <script>
-const links={
-  480:"http://infinity-tg-cloud.onrender.com/dl/106/InfinityTGCloudBOT_1764858814.mkv?hash=AgADUi",
-  720:"http://infinity-tg-cloud.onrender.com/dl/106/InfinityTGCloudBOT_1764858814.mkv?hash=AgADUi",
-  1080:"http://infinity-tg-cloud.onrender.com/dl/106/InfinityTGCloudBOT_1764858814.mkv?hash=AgADUi"
-};
+function extract(){
+  const html = document.getElementById("htmlInput").value;
+  if(!html.trim()){
+    alert("Please paste HTML code");
+    return;
+  }
 
-const v=document.getElementById("v");
-const m=document.getElementById("menu");
-document.getElementById("gear").onclick=()=> {
-  m.style.display = m.style.display==="block"?"none":"block";
-};
+  const iframeRegex = /<iframe[^>]+>/gi;
+  const srcRegex = /(src|data-src)=["']([^"']+)["']/i;
 
-v.src=links[720];
+  const matches = html.match(iframeRegex) || [];
+  const links = [];
 
-function q(x){
-  let t=v.currentTime;
-  v.src=links[x];
-  v.currentTime=t;
-  v.play();
-  m.style.display="none";
+  matches.forEach(tag=>{
+    const srcMatch = tag.match(srcRegex);
+    if(srcMatch){
+      links.push(srcMatch[2]);
+    }
+  });
+
+  const unique = [...new Set(links)];
+
+  if(unique.length === 0){
+    document.getElementById("output").textContent = "No iframe embed links found.";
+    return;
+  }
+
+  const json = unique.map((url,i)=>({
+    server: "Server " + (i+1),
+    embed: url
+  }));
+
+  document.getElementById("output").textContent =
+    "FOUND " + unique.length + " EMBED LINKS\n\n" +
+    JSON.stringify(json, null, 2);
+}
+
+function copy(){
+  const text = document.getElementById("output").textContent;
+  navigator.clipboard.writeText(text).then(()=>{
+    alert("Copied to clipboard");
+  });
 }
 </script>
+
 </body>
-</html/>
+</html>
