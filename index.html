@@ -1,527 +1,169 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AV Botz | Aman Vishwakarma</title>
-    <link rel="icon" href="https://i.ibb.co/LdkQ31Fs/image.jpg" type="image/x-icon">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8" />
+    <title>AV BOTZ | {{ file_name }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="https://img.sanishtech.com/u/62e636411ff87f8ccbdd9eb50eb18279.png" type="image/x-icon">
 
-    <style>
-        /* --- VARIABLES & RESET --- */
-        :root {
-            --bg-dark: #0f172a;   /* Deep Slate Blue */
-            --bg-light: #1e293b;  /* Lighter Blue for Gradient */
-            
-            --primary: #00f2ea;   /* Cyan */
-            --secondary: #ff0050; /* Neon Red */
-            --glass-bg: rgba(30, 41, 59, 0.4); /* Thoda bluish glass effect */
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --text-main: #ffffff;
-            --text-muted: #94a3b8; /* Slate text */
-        }
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Outfit', sans-serif;
-            scroll-behavior: smooth;
-        }
-
-        body {
-            background: radial-gradient(circle at 50% 0%, var(--bg-light), var(--bg-dark));
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            overflow-x: hidden;
-            position: relative;
-            min-height: 100vh;
-        }
-
-        /* --- BACKGROUND CANVAS --- */
-        #networkCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.6;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* --- HEADER --- */
-        header {
-            padding: 30px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 900;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-        
-        .logo span {
-            color: var(--primary);
-            text-shadow: 0 0 15px rgba(0, 242, 234, 0.5);
-        }
-
-        /* --- HERO SECTION --- */
-        .hero {
-            min-height: 80vh;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 40px;
-        }
-
-        .hero-content {
-            flex: 1;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 8px 16px;
-            background: rgba(0, 242, 234, 0.1);
-            border: 1px solid var(--primary);
-            border-radius: 50px;
-            color: var(--primary);
-            font-size: 0.9rem;
-            margin-bottom: 20px;
-            font-weight: 600;
-            box-shadow: 0 0 10px rgba(0, 242, 234, 0.2);
-        }
-
-        h1 {
-            font-size: 4rem;
-            line-height: 1.1;
-            font-weight: 800;
-            margin-bottom: 15px;
-        }
-
-        .typing-text {
-            color: var(--secondary);
-            text-shadow: 0 0 10px rgba(255, 0, 80, 0.4);
-        }
-
-        p.subtitle {
-            font-size: 1.2rem;
-            color: var(--text-muted);
-            margin-bottom: 30px;
-            line-height: 1.6;
-            max-width: 500px;
-        }
-
-        /* --- BUTTONS --- */
-        .btn-group {
-            display: flex;
-            gap: 15px;
-        }
-
-        .btn {
-            padding: 14px 30px;
-            border-radius: 12px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: #0f172a;
-            box-shadow: 0 0 20px rgba(0, 242, 234, 0.4);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 0 40px rgba(0, 242, 234, 0.6);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.2);
-            color: #fff;
-        }
-
-        .btn-outline:hover {
-            border-color: #fff;
-            background: rgba(255,255,255,0.05);
-        }
-
-        /* --- HERO IMAGE --- */
-        .hero-img-box {
-            flex: 1;
-            display: flex;
-            justify-content: flex-end;
-            position: relative;
-        }
-
-        .profile-img {
-            width: 320px;
-            height: 320px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid rgba(255,255,255,0.1);
-            position: relative;
-            z-index: 2;
-            animation: float 6s ease-in-out infinite;
-            box-shadow: 0 0 50px rgba(0, 242, 234, 0.2);
-        }
-
-        .circle-bg {
-            position: absolute;
-            width: 350px;
-            height: 350px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(0, 242, 234, 0.15) 0%, rgba(0,0,0,0) 70%);
-            z-index: 1;
-            top: 50%;
-            left: 65%;
-            transform: translate(-50%, -50%);
-        }
-
-        /* --- GLASS CARDS (Clock & Social) --- */
-        .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 30px;
-            transition: transform 0.3s, border-color 0.3s;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-        }
-
-        .glass-card:hover {
-            border-color: var(--primary);
-            transform: translateY(-5px);
-            background: rgba(30, 41, 59, 0.6);
-        }
-
-        /* Clock Section */
-        .clock-section {
-            margin: 60px 0;
-            text-align: center;
-        }
-        
-        .time-display {
-            font-size: 4.5rem;
-            font-weight: 700;
-            font-variant-numeric: tabular-nums;
-            background: linear-gradient(to bottom, #fff, #94a3b8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 10px 0;
-            filter: drop-shadow(0 0 15px rgba(255,255,255,0.2));
-        }
-
-        .date-display {
-            color: var(--primary);
-            font-size: 1.1rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        /* Social Grid */
-        .grid-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-bottom: 80px;
-        }
-
-        .social-item {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            text-decoration: none;
-            color: white;
-        }
-
-        .icon-box {
-            width: 60px;
-            height: 60px;
-            border-radius: 16px;
-            background: rgba(255,255,255,0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            transition: 0.3s;
-        }
-
-        .social-item:hover .icon-box {
-            background: var(--primary);
-            color: #0f172a;
-            box-shadow: 0 0 20px rgba(0, 242, 234, 0.5);
-        }
-
-        .social-info h3 { font-size: 1.1rem; }
-        .social-info span { font-size: 0.9rem; color: var(--text-muted); }
-
-        /* Contact Box */
-        .collab-box {
-            text-align: center;
-            padding: 60px 20px;
-            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
-            border-radius: 30px;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 40px;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            border-top: 1px solid var(--glass-border);
-            margin-top: 60px;
-        }
-
-        /* --- ANIMATIONS --- */
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-
-        /* --- MOBILE RESPONSIVE --- */
-        @media (max-width: 900px) {
-            .hero {
-                flex-direction: column-reverse;
-                text-align: center;
-                justify-content: center;
-                padding-top: 40px;
-            }
-
-            .hero-img-box {
-                justify-content: center;
-                margin-bottom: 20px;
-            }
-
-            .profile-img {
-                width: 200px;
-                height: 200px;
-            }
-            .circle-bg { width: 220px; height: 220px; left: 50%; }
-
-            h1 { font-size: 2.8rem; }
-            .btn-group { justify-content: center; }
-            .time-display { font-size: 3rem; }
-        }
-    </style>
+    <link rel="stylesheet" href="https://av-botz.vercel.app/2626/style.css">
 </head>
+
 <body>
 
-    <canvas id="networkCanvas"></canvas>
+    <canvas id="particle-canvas"></canvas>
 
-    <div class="container">
-        
-        <header>
-            <div class="logo">AV <span>BOTZ</span></div>
-        </header>
-
-        <section class="hero">
-            <div class="hero-content">
-                <span class="badge">🚀 v3.1 Updated</span>
-                <h1>Hello, I'm <br> <span style="color:white">Aman</span></h1>
-                <h2 style="font-size: 1.5rem; margin-bottom: 20px;">I am a <span class="typing-text" id="typewriter"></span>|</h2>
-                <p class="subtitle">
-                    Crafting advanced Telegram Bots and immersive Web Experiences. 
-                    Merging creativity with code to build the future.
-                </p>
-                <div class="btn-group">
-                    <a href="pay" class="btn btn-primary">
-                        <i class="fas fa-bolt"></i> Contribute
-                    </a>
-                    <a href="portfolio" class="btn btn-outline">Portfolio</a>
-                </div>
-            </div>
-
-            <div class="hero-img-box">
-                <div class="circle-bg"></div>
-                <img src="https://i.ibb.co/LdkQ31Fs/image.jpg" alt="Aman Profile" class="profile-img">
-            </div>
-        </section>
-
-        <section class="clock-section">
-            <div class="glass-card" style="display: inline-block; min-width: 300px;">
-                <div class="date-display" id="date">LOADING...</div>
-                <div class="time-display" id="time">00:00:00</div>
-                <div style="color: var(--secondary); font-weight: 600;">
-                    <i class="fas fa-location-dot"></i> INDIA (IST)
-                </div>
-            </div>
-        </section>
-
-        <section class="grid-section">
-            <a href="https://t.me/AV_BOTz_UPDATE" target="_blank" class="glass-card social-item">
-                <div class="icon-box"><i class="fab fa-telegram-plane"></i></div>
-                <div class="social-info">
-                    <h3>Telegram</h3>
-                    <span>@AV_BOTz_UPDATE</span>
-                </div>
+    <nav class="navbar anim-entry">
+        <div class="container d-flex justify-content-between align-items-center position-relative">
+            <a href="#" class="navbar-brand text-decoration-none">
+                <i class="fa-solid fa-robot me-2" style="color: var(--accent-color);"></i> AV BOTZ
             </a>
-
-            <a href="https://github.com/Botsthe" target="_blank" class="glass-card social-item">
-                <div class="icon-box"><i class="fab fa-github"></i></div>
-                <div class="social-info">
-                    <h3>GitHub</h3>
-                    <span>@Botsthe</span>
-                </div>
-            </a>
-
-            <a href="https://www.instagram.com/av.developerr" target="_blank" class="glass-card social-item">
-                <div class="icon-box"><i class="fab fa-instagram"></i></div>
-                <div class="social-info">
-                    <h3>Instagram</h3>
-                    <span>@av.developerr</span>
-                </div>
-            </a>
-        </section>
-
-        <section class="collab-box">
-            <h2 style="margin-bottom: 15px; font-size: 2rem;">Let's Build Something Crazy</h2>
-            <p style="color: var(--text-muted); margin-bottom: 30px;">Have an idea for a Bot or Website? Let's turn it into reality.</p>
             
-            <a href="portfolio/contact" target="_blank" class="btn btn-primary" style="margin: 0 auto; display: inline-flex;">
-                <i class="fas fa-paper-plane"></i> Contact Me
+            <button id="menuToggle" class="menu-btn">
+                <i class="fa-solid fa-bars"></i> Menu
+            </button>
+
+            <div id="drawer" class="nav-drawer">
+                <a href="https://streming-template-eight.vercel.app/Disclaimer.html" class="menu-item drawer-link"><i class="fa-solid fa-triangle-exclamation"></i> Disclaimer</a>
+                <a href="https://streming-template-eight.vercel.app/Contact.html" class="menu-item drawer-link"><i class="fa-solid fa-envelope"></i> Contact Us</a>
+                <a href="https://streming-template-eight.vercel.app/About.html" class="menu-item drawer-link"><i class="fa-solid fa-circle-info"></i> About Us</a>
+                <a href="https://streming-template-eight.vercel.app/DMCA.html" class="menu-item drawer-link"><i class="fa-solid fa-bookmark"></i> DMCA</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-4">
+
+        <div class="player-wrapper mb-4 anim-entry delay-1" id="videoContainer">
+            <video id="myVideo" playsinline controls class="w-100 h-100">
+                <source src="{{ file_url }}" type="video/mp4" />
+                <source src="{{ file_url }}" type="video/mkv" />
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+        <div class="glass-card anim-entry delay-2">
+            <div class="mb-3" style="color: var(--accent-color); font-weight: 700;">
+                <i class="fa-solid fa-circle-info me-2"></i> File Details
+            </div>
+            <div class="info-row">
+                <span style="color: #ccc;">Filename</span>
+                <span class="info-value">{{ file_name }}</span>
+            </div>
+            <div class="info-row">
+                <span style="color: #ccc;">Size</span>
+                <span class="info-value">{{ file_size }}</span>
+            </div>
+        </div>
+
+        <div class="row g-2 mb-3 anim-entry delay-3">
+            <div class="col-6">
+                <a onclick="play_intent('com.mxtech.videoplayer.ad')" class="btn-glass">
+                    <i class="fa-solid fa-play"></i> MX Player
+                </a>
+            </div>
+            <div class="col-6">
+                <a onclick="play_intent('org.videolan.vlc')" class="btn-glass">
+                    <i class="fa-solid fa-cone"></i> VLC Player
+                </a>
+            </div>
+            <div class="col-12">
+                <a onclick="play_intent('com.playit.videoplayer')" class="btn-glass">
+                    <i class="fa-solid fa-circle-play"></i> PlayIt Player
+                </a>
+            </div>
+            
+            <div class="col-12">
+                <button onclick="shareLink()" class="btn-glass btn-share">
+                    <i class="fa-solid fa-share-nodes"></i> Share with Friends
+                </button>
+            </div>
+        </div>
+
+        <div class="row g-2 anim-entry delay-3">
+            <div class="col-6">
+                <a href="{{ file_url }}" class="btn-glass">
+                    <i class="fa-solid fa-cloud-arrow-down"></i> Download
+                </a>
+            </div>
+            <div class="col-6">
+                <a href="{{ file_get }}" target="_blank" class="btn-glass btn-telegram">
+                    <i class="fa-brands fa-telegram"></i> Telegram
+                </a>
+            </div>
+            <div class="col-12">
+                <a href="tg://resolve?domain=AV_SUPPORT_GROUP" class="btn-glass btn-report">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Report Error / Disclaimer
+                </a>
+            </div>
+        </div>
+
+        <div class="glass-card anim-entry delay-3 mt-4 text-center">
+            <h5 style="color: var(--accent-color); font-weight: 800;">📣 Stay Connected with AV BOTZ</h5>
+            <p class="small text-white-50 mt-2">
+                Join our official Telegram channel to get:<br>
+                🔑 Latest password updates • 🎁 Bonus files & rewards<br>
+                🚀 Early access to new features
+            </p>
+            <a href="tg://resolve?domain=AV_BOTz_UPDATE" class="btn-glass btn-telegram mt-2">
+                <i class="fa-brands fa-telegram"></i> 🚀 Open in Telegram
             </a>
-        </section>
+        </div>
 
-        <footer>
-            <p>© 2025 AV BOTZ - Designed with <i class="fas fa-heart" style="color: var(--secondary);"></i> by Aman</p>
-        </footer>
+    </main>
 
+    <footer>
+        <div class="mb-2">
+            <i class="fa-solid fa-moon me-1"></i> 🌗 Smart Theme Enabled<br>
+            <span style="font-size: 10px; opacity: 0.6;">This page automatically adjusts its theme based on your device time.</span>
+        </div>
+        <p class="mb-0">🔹 Official content by AV BOTZ <br> @AV_BOTz_UPDATE &copy; 2025</p>
+        <p class="text-danger mt-2" style="font-size: 0.7rem;">⚠️ Sharing or re-uploading this content without credit is strictly prohibited.</p>
+    </footer>
+
+    <a href="https://t.me/AV_OWNER_BOT" target="_blank" class="floating-btn">
+         <i class="fa-solid fa-comments"></i> 💬 Need Help?
+    </a>
+
+    <div id="supportPopup" class="popup-overlay">
+        <div class="popup-content">
+            <span class="close-btn" onclick="toggleSupport()">×</span>
+            <h4 class="mb-3">🤝 Need Assistance?</h4>
+            <p class="text-white-50">Having trouble with playback, download, or access issues? Our support team is available on Telegram.</p>
+            <a href="tg://resolve?domain=AV_BOTz_UPDATE" class="btn-glass btn-telegram">
+                👉 Chat on Telegram
+            </a>
+            <div class="mt-3 small text-muted">Fast replies • Trusted support • 24/7 updates</div>
+        </div>
+    </div>
+
+    <div id="securityModal" class="popup-overlay">
+        <div class="popup-content border-danger">
+            <div class="text-danger display-4 mb-2"><i class="fa-solid fa-shield-halved"></i></div>
+            <h4 class="text-danger">🚫 Restricted Action Detected</h4>
+            <p>Developer tools are disabled on this page to protect content integrity.</p>
+            <p class="small text-white-50">⚠️ Any suspicious activity may lead to temporary access restriction.</p>
+            <button class="btn-glass" onclick="closeSecurity()">✅ I Understand</button>
+        </div>
     </div>
 
     <script>
-        // --- 1. TYPEWRITER EFFECT ---
-        const textElement = document.getElementById('typewriter');
-        const texts = ["Bot Developer", "Web Designer", "Tech Enthusiast"];
-        let count = 0;
-        let index = 0;
-        let currentText = "";
-        let letter = "";
-
-        (function type() {
-            if (count === texts.length) { count = 0; }
-            currentText = texts[count];
-            letter = currentText.slice(0, ++index);
-            
-            textElement.textContent = letter;
-            if (letter.length === currentText.length) {
-                count++;
-                index = 0;
-                setTimeout(type, 2000); // Pause at end
-            } else {
-                setTimeout(type, 100); // Typing speed
-            }
-        })();
-
-        // --- 2. CLOCK FUNCTION ---
-        function updateClock() {
-            const now = new Date();
-            const options = { timeZone: 'Asia/Kolkata' };
-            
-            const timeStr = now.toLocaleTimeString('en-US', { ...options, hour12: false });
-            const dateStr = now.toLocaleDateString('en-US', { ...options, weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
-
-            document.getElementById('time').innerText = timeStr;
-            document.getElementById('date').innerText = dateStr;
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
-
-        // --- 3. BACKGROUND CANVAS ANIMATION ---
-        const canvas = document.getElementById('networkCanvas');
-        const ctx = canvas.getContext('2d');
-        
-        let width, height;
-        let particles = [];
-
-        function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resize);
-        resize();
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 0.5;
-                this.vy = (Math.random() - 0.5) * 0.5;
-                this.size = Math.random() * 2;
-            }
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                if (this.x < 0 || this.x > width) this.vx *= -1;
-                if (this.y < 0 || this.y > height) this.vy *= -1;
-            }
-            draw() {
-                ctx.fillStyle = 'rgba(0, 242, 234, 0.4)'; // Particle color matching cyan theme
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-
-        function initParticles() {
-            particles = [];
-            const count = (width * height) / 15000; 
-            for (let i = 0; i < count; i++) particles.push(new Particle());
-        }
-
-        function animate() {
-            ctx.clearRect(0, 0, width, height);
-            
-            for (let i = 0; i < particles.length; i++) {
-                let p1 = particles[i];
-                p1.update();
-                p1.draw();
-
-                for (let j = i; j < particles.length; j++) {
-                    let p2 = particles[j];
-                    let dx = p1.x - p2.x;
-                    let dy = p1.y - p2.y;
-                    let dist = dx * dx + dy * dy;
-
-                    if (dist < 15000) {
-                        ctx.strokeStyle = `rgba(0, 242, 234, ${1 - dist/15000})`; // Line color
-                        ctx.lineWidth = 0.5;
-                        ctx.beginPath();
-                        ctx.moveTo(p1.x, p1.y);
-                        ctx.lineTo(p2.x, p2.y);
-                        ctx.stroke();
-                    }
-                }
-            }
-            requestAnimationFrame(animate);
-        }
-
-        initParticles();
-        animate();
+        window.siteConfig = {
+            thumbnailUrl: "https://img.sanishtech.com/u/29b202409346d1bc163738eb0cab22fa.png",
+            watermarkText: "@AV_BOTz_UPDATE",
+            videoUrl: "{{ file_url }}" 
+        };
     </script>
+
+    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+    <script src="https://av-botz.vercel.app/2626/script.js"></script>
 </body>
 </html>
