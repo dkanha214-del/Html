@@ -1,0 +1,16 @@
+{
+  "routes": [
+    {
+      "src": "/watch/(.*)",
+      "dest": "https://kanha-streaming-bot.onrender.com/watch/$1"
+    },
+    {
+      "src": "/download/(.*)",
+      "dest": "https://kanha-streaming-bot.onrender.com/download/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "https://kanha-streaming-bot.onrender.com/$1"
+    }
+  ]
+}
